@@ -1,0 +1,24 @@
+diff -u a/bin/deadlinecommand b/bin/deadlinecommand
+--- a/bin/deadlinecommand
++++ b/bin/deadlinecommand
+@@ -8,7 +8,7 @@
+ PATH=$PATH:/bin:/usr/bin
+ 
+ APP_NAME="deadlinecommand"
+-BIN_PATH=`cd "$(dirname "$0")";pwd -P`
++BIN_PATH=`dirname "$(realpath "$0")"`
+ EXECUTABLE="${BIN_PATH}/${APP_NAME}.exe"
+ 
+ # Location of config scripts which get sourced on startup
+diff -u a/bin/deadlinecommandbg b/bin/deadlinecommandbg
+--- a/bin/deadlinecommandbg
++++ b/bin/deadlinecommandbg
+@@ -8,7 +8,7 @@
+ PATH=$PATH:/bin:/usr/bin
+ 
+ APP_NAME="deadlinecommandbg"
+-BIN_PATH=`cd "$(dirname "$0")";pwd -P`
++BIN_PATH=`dirname "$(realpath "$0")"`
+ EXECUTABLE="${BIN_PATH}/${APP_NAME}.exe"
+ 
+ # Location of config scripts which get sourced on startup

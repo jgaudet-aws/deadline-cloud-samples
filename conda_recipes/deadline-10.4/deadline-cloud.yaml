@@ -1,0 +1,5 @@
+condaPlatforms:
+  - platform: linux-64
+    defaultSubmit: true
+    sourceArchiveFilename: deadline-10.4.0.8-linux-x64.tar.bz2
+    sourceDownloadInstructions: 'Run DeadlineClient-10.4.0.8-linux-x64-installer.run and generate a tarball from the installed binaries'

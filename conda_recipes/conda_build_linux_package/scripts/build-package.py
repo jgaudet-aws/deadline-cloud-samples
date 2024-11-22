@@ -35,9 +35,14 @@ def get_next_build_number(package_name, package_version, conda_platform, channel
     package_search_result = subprocess.run(
         command,
         stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
+        stderr=subprocess.PIPE,
     )
-    package_search_result_json = json.loads(package_search_result.stdout)
+    try:
+        package_search_result_json = json.loads(package_search_result.stdout)
+    except json.JSONDecodeError:
+        print(f"Got invalid JSON output from conda: {package_search_result.stdout}")
+        print(f"Stderr: {package_search_result.stderr}")
+        raise
     print(json.dumps(package_search_result_json, indent=1))
 
     if package_search_result.returncode == 0 and package_name in package_search_result_json:

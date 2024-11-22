@@ -1,0 +1,115 @@
+specificationVersion: 'jobtemplate-2023-09'
+name: Deadline 10 Export
+
+parameterDefinitions:
+
+# Render Parameters
+- name: D10JobInfo
+  type: PATH
+  objectType: FILE
+  dataFlow: IN
+  userInterface:
+    control: CHOOSE_INPUT_FILE
+    label: D10 Job Info File
+    groupLabel: Render Parameters
+    fileFilters:
+    - label: Job Info Files
+      patterns: ["*.job"]
+    - label: All Files
+      patterns: ["*"]
+  default: assets/Blender_jobInfo.job
+  description: >
+    Choose the Deadline 10 Job Info file you want to render in Deadline Cloud. Use the 'Export' button in the 
+    Submission Params section of the Job Properties window of the desired Job in the Deadline 10 Monitor to 
+    generate this file.
+- name: D10PluginInfo
+  type: PATH
+  objectType: FILE
+  dataFlow: IN
+  userInterface:
+    control: CHOOSE_INPUT_FILE
+    label: D10 Plugin Info File
+    groupLabel: Render Parameters
+    fileFilters:
+    - label: Plugin Info Files
+      patterns: ["*.job"]
+    - label: All Files
+      patterns: ["*"]
+  default: assets/Blender_pluginInfo.job
+  description: >
+    Choose the Deadline 10 Plugin Info file you want to render in Deadline Cloud. Use the 'Export' button in the 
+    Submission Params section of the Job Properties window of the desired Job in the Deadline 10 Monitor to 
+    generate this file.
+- name: D10PluginDirectory
+  type: PATH
+  objectType: DIRECTORY
+  dataFlow: IN
+  userInterface:
+    control: CHOOSE_DIRECTORY
+    label: D10 Plugin Directory
+    groupLabel: Render Parameters
+  default: assets/plugins
+  description: >
+    Choose the Deadline 10 Plugin directory.
+- name: Frames
+  type: STRING
+  userInterface:
+    control: LINE_EDIT
+    label: Frames
+    groupLabel: Render Parameters
+  default: 1-180
+
+# Software Environment
+- name: CondaPackages
+  type: STRING
+  userInterface:
+    control: LINE_EDIT
+    label: Conda Packages
+    groupLabel: Software Environment
+  default: blender deadline
+  description: >
+    If you have a Queue Environment that creates a Conda environment from a parameter called CondaPackages, this will
+    tell it to install blender and deadline10.
+- name: CondaChannels
+  type: STRING
+  userInterface:
+    control: LINE_EDIT
+    label: Conda Channels
+    groupLabel: Software Environment
+
+
+steps:
+- name: RenderDeadline
+  parameterSpace:
+    taskParameterDefinitions:
+    - name: Frame
+      type: INT
+      range: "{{Param.Frames}}"
+  script:
+    actions:
+      onRun:
+        command: bash
+        args: ['{{Task.File.Run}}']
+    embeddedFiles:
+      - name: Run
+        type: TEXT
+        data: |
+          # Configure the task to fail if any individual command fails.
+          set -xeuo pipefail
+
+          # Translate the Deadline Cloud path mapping format to D10 format
+          D10_PM_RULES=`jq '.path_mapping_rules | map({ Path: .source_path, LinuxPath: .destination_path, WindowsPath: .destination_path, MacPath: .destination_path, CaseSensitive: true, RegularExpression: false })' {{Session.PathMappingRulesFile}}`
+          D10_REPO_SETTINGS=`pwd`/repo_settings.json
+
+          # Store D10 path mappings in a Repository Settings json file
+          echo '{ "MappedOSPath" :' > $D10_REPO_SETTINGS
+          echo $D10_PM_RULES >> $D10_REPO_SETTINGS
+          echo '}' >> $D10_REPO_SETTINGS
+
+          deadlinecommand RenderJob \
+                  '{{Param.D10JobInfo}}' \
+                  '{{Param.D10PluginInfo}}' \
+                  --standalone \
+                  --overrideframes {{Task.Param.Frame}} \
+                  --plugindir {{Param.D10PluginDirectory}} \
+                  --reposettings $D10_REPO_SETTINGS

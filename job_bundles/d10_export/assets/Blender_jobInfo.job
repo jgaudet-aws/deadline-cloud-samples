@@ -1,0 +1,8 @@
+Name=Sample Deadline 10 Job
+UserName=demouser
+Frames=1-180
+ChunkSize=5
+OverrideTaskExtraInfoNames=False
+Plugin=Blender
+OutputDirectory0=/Users/Shared/assets/images/test
+OutputFilename0=shiny_test.####.png
