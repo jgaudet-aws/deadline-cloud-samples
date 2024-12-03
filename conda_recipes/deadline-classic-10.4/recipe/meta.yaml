@@ -1,0 +1,36 @@
+{% set name = "deadline-classic" %}
+{% set version = "10.4.0.10" %}
+
+package:
+  name: {{ name }}
+  version: {{ version }}
+
+source:
+  # NOTE: This URL needs to be updated for each version because of the folder the tarball resides in will have a different
+  #       prefix that is not tied to the version itself for each release (e.g., /10.4/1_..., /10.4/2_..., etc)
+  # NOTE2: For deadline cloud submissions, this gets replaced by the tarball in archive_files and described in deadline-cloud.yaml
+  url: https://thinkbox-installers.s3.us-west-2.amazonaws.com/Releases/Deadline/10.4/2_{{version}}/Deadline-{{version}}-linux-installers.tar # [linux64]
+  sha256: c26adebab4b20d38471935e02ddfe453f6ba3f31ae6e2cfda6d1c98344ec3a35 # [linux64]
+  patches:
+   - 0001-Fix-script-path.patch
+
+build:
+  number: 0
+  # These build options for repackaging an application
+  # https://docs.conda.io/projects/conda-build/en/latest/resources/define-metadata.html
+  binary_relocation: False
+  detect_binary_files_with_prefix: False
+  missing_dso_whitelist:
+  - "**"
+
+test:
+  commands:
+    - deadlinecommand --help
+    - deadlinecommandbg --help
+
+about:
+  summary: Deadline 10 job runtime used to run legacy Deadline 10 jobs in AWS Deadline Cloud
+  dev_url: https://aws.amazon.com/thinkbox-deadline/
+  license: Thinkbox-EULA
+  license_file:
+    - ThinkboxEULA.txt

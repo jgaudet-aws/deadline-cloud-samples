@@ -1,0 +1,19 @@
+condaPlatforms:
+  - platform: linux-64
+    defaultSubmit: true
+    sourceArchiveFilename: deadline-10.4.0.10-linux-x64.tgz
+    sourceDownloadInstructions: >
+
+      Run the following commands (on Linux) in order to generate the *.tgz expected by this recipe:
+
+      pushd ./archive_files/
+
+      curl -LO https://thinkbox-installers.s3.us-west-2.amazonaws.com/Releases/Deadline/10.4/2_10.4.0.10/Deadline-10.4.0.10-linux-installers.tar
+
+      tar -xf ./Deadline-10.4.0.10-linux-installers.tar
+
+      sudo ./DeadlineClient-10.4.0.10-linux-x64-installer.run --mode unattended --binariesonly true --prefix `pwd`/deadline_client/
+
+      tar -a -cf deadline-10.4.0.10-linux-x64.tgz ./deadline_client/
+
+      popd

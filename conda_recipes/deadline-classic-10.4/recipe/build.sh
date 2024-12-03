@@ -34,7 +34,7 @@ cat <<EOF > ${D10_CONFIG_DIR}/deadline.ini
 SlaveDataRoot=${D10_CONFIG_DIR}/workers
 EOF
 
-# Add env vars to help locate Deadline 10 things within the conda package install
+# Add env vars on activate to help locate Deadline 10 things within the conda package install at runtime
 mkdir -p $PREFIX/etc/conda/activate.d
 cat <<EOF > $PREFIX/etc/conda/activate.d/$PKG_NAME-$PKG_VERSION-vars.sh
 export "DEADLINE_PATH=\$CONDA_PREFIX/opt/Thinkbox/Deadline10"
@@ -42,6 +42,7 @@ export "DEADLINE_SYSTEM_PATH=\$CONDA_PREFIX/var/lib/Thinkbox"
 export "DEADLINE_VERSION=$DEADLINE_VERSION"
 EOF
 
+# Clean up env set above on deactivate
 mkdir -p $PREFIX/etc/conda/deactivate.d
 cat <<EOF > $PREFIX/etc/conda/deactivate.d/$PKG_NAME-$PKG_VERSION-vars.sh
 unset DEADLINE_PATH

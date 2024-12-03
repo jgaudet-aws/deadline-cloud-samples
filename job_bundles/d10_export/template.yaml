@@ -17,7 +17,7 @@ parameterDefinitions:
       patterns: ["*.job"]
     - label: All Files
       patterns: ["*"]
-  default: assets/Blender_jobInfo.job
+  default: assets/jobInfo.job
   description: >
     Choose the Deadline 10 Job Info file you want to render in Deadline Cloud. Use the 'Export' button in the 
     Submission Params section of the Job Properties window of the desired Job in the Deadline 10 Monitor to 
@@ -35,7 +35,25 @@ parameterDefinitions:
       patterns: ["*.job"]
     - label: All Files
       patterns: ["*"]
-  default: assets/Blender_pluginInfo.job
+  default: assets/pluginInfo.job
+  description: >
+    Choose the Deadline 10 Plugin Info file you want to render in Deadline Cloud. Use the 'Export' button in the 
+    Submission Params section of the Job Properties window of the desired Job in the Deadline 10 Monitor to 
+    generate this file.
+- name: PathMappingConversionScript
+  type: PATH
+  objectType: FILE
+  dataFlow: IN
+  userInterface:
+    control: CHOOSE_INPUT_FILE
+    label: Path Mapping Conversion
+    groupLabel: Render Parameters
+    fileFilters:
+    - label: Python Files
+      patterns: ["*.py"]
+    - label: All Files
+      patterns: ["*"]
+  default: translate_ja_mappings.py
   description: >
     Choose the Deadline 10 Plugin Info file you want to render in Deadline Cloud. Use the 'Export' button in the 
     Submission Params section of the Job Properties window of the desired Job in the Deadline 10 Monitor to 
@@ -66,16 +84,10 @@ parameterDefinitions:
     control: LINE_EDIT
     label: Conda Packages
     groupLabel: Software Environment
-  default: blender deadline
+  default: deadline-classic
   description: >
     If you have a Queue Environment that creates a Conda environment from a parameter called CondaPackages, this will
     tell it to install blender and deadline10.
-- name: CondaChannels
-  type: STRING
-  userInterface:
-    control: LINE_EDIT
-    label: Conda Channels
-    groupLabel: Software Environment
 
 
 steps:
@@ -98,13 +110,16 @@ steps:
           set -xeuo pipefail
 
           # Translate the Deadline Cloud path mapping format to D10 format
-          D10_PM_RULES=`jq '.path_mapping_rules | map({ Path: .source_path, LinuxPath: .destination_path, WindowsPath: .destination_path, MacPath: .destination_path, CaseSensitive: true, RegularExpression: false })' {{Session.PathMappingRulesFile}}`
+          #D10_PM_RULES=`jq '.path_mapping_rules | map({ Path: .source_path, LinuxPath: .destination_path, WindowsPath: .destination_path, MacPath: .destination_path, CaseSensitive: true, RegularExpression: false })' {{Session.PathMappingRulesFile}}`
           D10_REPO_SETTINGS=`pwd`/repo_settings.json
 
-          # Store D10 path mappings in a Repository Settings json file
-          echo '{ "MappedOSPath" :' > $D10_REPO_SETTINGS
-          echo $D10_PM_RULES >> $D10_REPO_SETTINGS
-          echo '}' >> $D10_REPO_SETTINGS
+          # Store D10 path mappings in a Repository Settings json file.
+          #echo '{ "MappedOSPath" :' > $D10_REPO_SETTINGS
+          #echo $D10_PM_RULES >> $D10_REPO_SETTINGS
+          #echo '}' >> $D10_REPO_SETTINGS
+          deadlinecommand ExecuteScriptNoGUI {{Param.PathMappingConversionScript}} {{Session.PathMappingRulesFile}} "${D10_REPO_SETTINGS}"
+
+          cat "${D10_REPO_SETTINGS}"
 
           deadlinecommand RenderJob \
                   '{{Param.D10JobInfo}}' \
