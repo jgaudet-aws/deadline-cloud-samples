@@ -1,0 +1,31 @@
+{% set name = "deadline-10-runtime" %}
+{% set version = "10.4.1.8" %}
+
+package:
+  name: {{ name }}
+  version: {{ version }}
+
+source:
+  # NOTE: For deadline cloud submissions, this gets replaced by the tarball in archive_files and described in deadline-cloud.yaml
+  url: https://thinkbox-installers.s3.us-west-2.amazonaws.com/Releases/Deadline/10.4/5_{{version}}/Deadline-{{version}}-linux-installers.tar # [linux64]
+  sha256: fbaea79f114d4ced246bbd0baeee5adc62b99226b8433dee57e22d59f4eae722 # [linux64]
+
+build:
+  number: 0
+  binary_relocation: False
+  detect_binary_files_with_prefix: False
+  missing_dso_whitelist:
+  - "**"
+
+test:
+  commands:
+    - deadlinecommand --help
+    - deadlinecommandbg --help
+
+about:
+  summary: Deadline 10 job runtime used to run Deadline 10 jobs via `deadlinecommand --RenderJob`
+  dev_url: https://aws.amazon.com/thinkbox-deadline/
+  license: Thinkbox-EULA
+  license_file:
+    - {{name}}_EULA.txt
+    - {{name}}_NOTICE.txt

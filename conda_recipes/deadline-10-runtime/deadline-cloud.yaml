@@ -1,0 +1,9 @@
+condaPlatforms:
+  - platform: linux-64
+    defaultSubmit: true
+    sourceArchiveFilename: Deadline-10.4.1.8-linux-installers.tar
+    sourceDownloadInstructions: >
+
+      Run the following command in order to get the tarball that is expected by this recipe:
+
+      curl -LO https://thinkbox-installers.s3.us-west-2.amazonaws.com/Releases/Deadline/10.4/5_10.4.1.8/Deadline-10.4.1.8-linux-installers.tar --output-dir archive_files/
