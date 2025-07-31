@@ -1,0 +1,33 @@
+{% set name = "draft" %}
+{% set version = "1.8.4" %}
+
+package:
+  name: {{ name }}
+  version: {{ version }}
+
+source:
+  url: https://thinkbox-installers.s3.us-west-2.amazonaws.com/Releases/Draft/{{version}}/Draft_{{version}}.zip
+  sha256: 957fc8af04e878607b86c046d5575b16fca55f660db4fa9e83460752b6425765
+
+build:
+  number: 0
+  binary_relocation: False
+  detect_binary_files_with_prefix: False
+  missing_dso_whitelist:
+  - "**"
+
+requirements:
+  build:
+    - patchelf
+  host:
+    - python 3.10
+  run:
+    - python 3.10
+
+test:
+  imports:
+    - Draft
+
+about:
+  summary: Draft is a Python library used for automating simple compositing and video processing tasks
+  dev_url: https://docs.thinkboxsoftware.com/products/draft/1.8/Documentation/index.html

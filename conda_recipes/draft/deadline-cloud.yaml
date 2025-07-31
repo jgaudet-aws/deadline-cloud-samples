@@ -1,0 +1,9 @@
+condaPlatforms:
+  - platform: linux-64
+    defaultSubmit: true
+    sourceArchiveFilename: Draft_1.8.4.zip
+    sourceDownloadInstructions: >
+      Compress the `draft3` folder in your Deadline 10 repository into a Zip file, and tweak the SHA256 has in the meta.yaml to match
+jobParameters:
+- name: CondaChannels
+  value: conda-forge
